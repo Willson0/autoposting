@@ -1,5 +1,4 @@
 <script>
-import config from "../config.json"
 import axios from "axios";
 export default {
     name: "LoginView.vue",
@@ -8,7 +7,7 @@ export default {
 
         document.body.style.backgroundColor = "#F9F6F3";
         window.onTelegramAuth = async function (user) {
-            await fetch (config.backend + "auth/login", {
+            await fetch (this.backend + "auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
