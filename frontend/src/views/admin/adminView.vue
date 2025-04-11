@@ -16,6 +16,14 @@ export default {
             time_repeat: 0,
             cooldown: 0,
             price: 0,
+            editProxy: {},
+            newProxy: {
+                "ip": "",
+                "port": "",
+                "type": "http",
+                "password": null,
+                "username": null,
+            },
         };
     },
     components: {
@@ -173,6 +181,41 @@ export default {
             }).then((response) => {
                 alert("Успешно сохранено!");
             })
+        },
+        showpopup (cl) {
+            document.body.style.overflow = "hidden";
+            document.querySelector('.popup.' + cl).classList.add('active');
+        },
+        hidepopup(cl) {
+            document.querySelectorAll('.popup').forEach(el => el.classList.remove('active'));
+            document.body.style.overflow = "";
+        },
+        saveproxy () {
+            axios.post(this.backend + 'proxy/' + this.editProxy.id, this.editProxy).then((response) => {
+                alert("Сохранено!");
+                this.fetchstats();
+                this.hidepopup();
+            }).catch((response) => {
+                alert("Неправильное прокси!");
+            });
+        },
+        deleteproxy () {
+            axios.delete(this.backend + 'proxy/' + this.editProxy.id).then((response) => {
+                alert("Удалено!");
+                this.fetchstats();
+                this.hidepopup();
+            }).catch((response) => {
+                alert("Ошибка!");
+            });
+        },
+        addproxy () {
+            axios.post(this.backend + 'proxy', this.newProxy).then((response) => {
+                alert("Добавлено!");
+                this.fetchstats();
+                this.hidepopup();
+            }).catch((response) => {
+                alert("Неправильное прокси!");
+            });
         }
     },
     async mounted() {
@@ -191,6 +234,81 @@ export default {
 </script>
 
 <template>
+    <div class="popup newproxy">
+        <div>
+            <div class="nav_main_block">
+                <div>
+                    <div>
+                        <label for="ip">IP: </label>
+                        <input v-model="newProxy.ip" type="text" id="ip">
+                    </div>
+                    <div>
+                        <label for="port">PORT: </label>
+                        <input v-model="newProxy.port" type="text" id="port">
+                    </div>
+                    <div>
+                        <label for="type">TYPE: </label>
+                        <select v-model="newProxy.type" name="" id="type">
+                            <option value="http">HTTP</option>
+                            <option value="socks5">SOCKS5</option>
+                        </select>
+                    </div>
+                    <p>Авторизация: </p>
+                    <div>
+                        <label for="username">USERNAME: </label>
+                        <input v-model="newProxy.username" type="text" id="username">
+                    </div>
+                    <div>
+                        <label for="password">PASSWORD: </label>
+                        <input v-model="newProxy.password" type="text" id="password">
+                    </div>
+                </div>
+            </div>
+            <div class="popup_buttons">
+                <button @click="hidepopup" class="popup_cancel">Отмена</button>
+                <button @click="addproxy" class="newPost_button">Сохранить</button>
+            </div>
+        </div>
+    </div>
+    <div class="popup proxy">
+        <div>
+            <div class="popup_buttons">
+                <button @click="deleteproxy" class="newPost_button delete">Удалить</button>
+            </div>
+            <div class="nav_main_block">
+                <div>
+                    <div>
+                        <label for="ip">IP: </label>
+                        <input v-model="editProxy.ip" type="text" id="ip">
+                    </div>
+                    <div>
+                        <label for="port">PORT: </label>
+                        <input v-model="editProxy.port" type="text" id="port">
+                    </div>
+                    <div>
+                        <label for="type">TYPE: </label>
+                        <select v-model="editProxy.type" name="" id="type">
+                            <option value="http">HTTP</option>
+                            <option value="socks5">SOCKS5</option>
+                        </select>
+                    </div>
+                    <p>Авторизация: </p>
+                    <div>
+                        <label for="username">USERNAME: </label>
+                        <input v-model="editProxy.username" type="text" id="username">
+                    </div>
+                    <div>
+                        <label for="password">PASSWORD: </label>
+                        <input v-model="editProxy.password" type="text" id="password">
+                    </div>
+                </div>
+            </div>
+            <div class="popup_buttons">
+                <button @click="hidepopup" class="popup_cancel">Отмена</button>
+                <button @click="saveproxy" class="newPost_button">Сохранить</button>
+            </div>
+        </div>
+    </div>
     <div class="admin_main_tasks_popup popup">
         <div>
             <h2 v-if="task !== -1"><i class="fa-solid fa-pen"></i>&nbsp;Edit task #{{updtask.id}}</h2>
@@ -337,20 +455,18 @@ export default {
                 </div>
             </div>
             <div class="admin_main_tasks">
-                <div class="admin_main_tasks_header">
+                <div style="background-color: transparent"  class="admin_main_tasks_header">
                     <div class="admin_main_tasks_title">
-                        <h1>Топ популярности</h1>
-                        <h2>Ивенты</h2>
+                        <h1>Прокси</h1>
+                        <h2>Используемые прокси для обхода блокировки</h2>
+                        <button @click="showpopup('newproxy')">Новое прокси</button>
                     </div>
                 </div>
-                <div class="admin_main_tasks_main">
-                    <div @click="$router.push('/admin/webinars/' + el.id)" v-for="el in data.webinars">
+                <div class="admin_main_proxy">
+                    <div @click="showpopup('proxy'); editProxy = {...el}" v-for="el in data.proxy">
                         <div class="admin_main_tasks_el_text">
-                            <div class="admin_main_tasks_el_title">
-                                <span>{{ el.title }}</span>
-                            </div>
-                            <div class="admin_main_tasks_el_description">
-                                {{ el.description }}
+                            <div class="admin_main_proxy_el">
+                                <span>{{el.type}}  {{ el.ip }}:{{el.port}}</span>
                             </div>
                         </div>
                     </div>

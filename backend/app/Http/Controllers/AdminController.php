@@ -6,6 +6,7 @@ use App\Http\Requests\SettingsPostRequest;
 use App\Models\Admin;
 use App\Models\Payment;
 use App\Models\Post;
+use App\Models\Proxy;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
@@ -51,8 +52,9 @@ class AdminController extends Controller
 
         return response()->json(["accounts" => $accountarr,
             "money" => $money, "money30" => $money30d, "usersPerDay" => $usersperday,
-            "logsPerDay" => $logsperday, "settings" => utils::getSettings()],
-            200);
+            "logsPerDay" => $logsperday, "settings" => utils::getSettings(),
+            "proxy" => Proxy::all()->toArray()
+        ], 200);
     }
 
     public function settings (SettingsPostRequest $request) {
