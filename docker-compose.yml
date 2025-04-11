@@ -11,8 +11,8 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - ./backend:/var/www/laravel
       - ./frontend/dist:/var/www/vue
-      - /etc/letsencrypt/live/abeta.app/privkey.pem:/etc/ssl/private/privkey.pem
-      - /etc/letsencrypt/live/abeta.app/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - ./certs/domain.key:/etc/ssl/private/privkey.key
+      - ./certs/fullchain.crt:/etc/ssl/certs/fullchain.crt
     depends_on:
       - php
       - frontend

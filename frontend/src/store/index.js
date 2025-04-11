@@ -3,8 +3,8 @@ import { createStore } from 'vuex';
 const store = createStore({
     state: {
         user: {},
-        backend: "http://127.0.0.1:8000/api/",
-        storage: "http://127.0.0.1:8000/storage/",
+        backend: "https://exobloom.ru/api/",
+        storage: "https://exobloom.ru/storage/",
     },
     mutations: {
         setUser(state, newValue) {
