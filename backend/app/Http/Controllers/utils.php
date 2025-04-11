@@ -14,6 +14,8 @@ use danog\MadelineProto\Settings\Connection;
 use danog\MadelineProto\Settings\Ipc;
 use danog\MadelineProto\Settings\Peer;
 use danog\MadelineProto\Stream\MTProtoTransport\ObfuscatedStream;
+use danog\MadelineProto\Stream\Proxy\HttpProxy;
+use danog\MadelineProto\Stream\Proxy\SocksProxy;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -120,8 +122,22 @@ class utils
         try {
             $proxy = Proxy::inRandomOrder()->first();
             if ($proxy) {
-                $settings->setConnection((new Connection)
-                    ->addProxy(self::proxyToString($proxy->ip, $proxy->port, $proxy->type, $proxy->username, $proxy->password)));
+                if ($proxy->type == "http")
+                    $settings->setConnection((new Connection)
+                        ->addProxy(HttpProxy::class, [
+                            "address" => $proxy->ip,
+                            "port" => $proxy->port,
+                            "username" => $proxy->username ?: null,
+                            "password" => $proxy->password ?: null,
+                        ]));
+                else if ($proxy->type == "socks5")
+                    $settings->setConnection((new Connection)
+                        ->addProxy(SocksProxy::class, [
+                            "address" => $proxy->ip,
+                            "port" => $proxy->port,
+                            "username" => $proxy->username ?: null,
+                            "password" => $proxy->password ?: null,
+                        ]));
             }
 
             $MadelineProto = new \danog\MadelineProto\API("public/sessions/session_" . $user->id .  '.session' , $settings);
