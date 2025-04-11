@@ -83,6 +83,8 @@ class AuthController extends Controller
                     ->orWhere("end_date", ">", Carbon::now("Europe/Moscow"));
             })->get();
 
+        $user["time_repeat"] = intval(utils::getSettings()["time_repeat"]);
+
         return $user;
     }
 

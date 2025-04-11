@@ -92,10 +92,10 @@ export default {
                     document.querySelector(".popup.edit_post .selectDate_repeat_main_title .dp__main input").style.border = "1px #f44336 solid"
                     return this.notify("Выберите дату окончания!", 1);
                 }
-                if (!this.editedPost.time_repeat) this.editedPost.time_repeat = 61;
-                if (this.editedPost.time_repeat < 61) {
+                if (!this.editedPost.time_repeat) this.editedPost.time_repeat = this.user.time_repeat;
+                if (this.editedPost.time_repeat < this.user.time_repeat) {
                     document.querySelector(".popup.edit_post .selectDate_repeat_interval>input").style.border = "1px #f44336 solid";
-                    return this.notify("Время повтора не может быть меньше 61 минуты!", 1);
+                    return this.notify(`Время повтора не может быть меньше ${this.user.time_repeat} минуты!`, 1);
                 }
                 if (this.not_repeat === "count" && this.editedPost.end_count < 1) this.editedPost.end_count = 1;
             }
@@ -175,10 +175,10 @@ export default {
                     document.querySelector(".selectDate_repeat_main_title .dp__main input").style.border = "1px #f44336 solid"
                     return this.notify("Выберите дату окончания!", 1);
                 }
-                if (!this.repeat_time) this.repeat_time = 61;
-                if (this.repeat_time < 61) {
+                if (!this.repeat_time) this.repeat_time = this.user.time_repeat;
+                if (this.repeat_time < this.user.time_repeat) {
                     document.querySelector(".selectDate_repeat_interval>input").style.border = "1px #f44336 solid";
-                    return this.notify("Время повтора не может быть меньше 61 минуты!", 1);
+                    return this.notify(`Время повтора не может быть меньше ${this.user.time_repeat} минуты!`, 1);
                 }
                 if (this.not_repeat === "count" && this.count < 1) this.count = 1;
             }
@@ -280,7 +280,7 @@ export default {
                             <label for="selectDate_repeat">Повторять</label>
                         </div>
                         <div :style="repeat ? '' : 'color:gray;'" class="selectDate_repeat_interval">
-                            Через каждые <input :disabled="!repeat" type="number" v-model="repeat_time" min="61" placeholder="61"> минут
+                            Через каждые <input :disabled="!repeat" type="number" v-model="repeat_time" :min="this.user.time_repeat" :placeholder="this.user.time_repeat"> минут
                         </div>
                     </div>
                     <div :style="repeat ? '' : 'color:gray;'" class="selectDate_repeat_main">
@@ -357,7 +357,7 @@ export default {
                                 <label for="selectDate_repeat">Повторять</label>
                             </div>
                             <div :style="repeat ? '' : 'color:gray;'" class="selectDate_repeat_interval">
-                                Через каждые <input :disabled="!repeat" type="number" v-model="editedPost.time_repeat" min="61" placeholder="61"> минут
+                                Через каждые <input :disabled="!repeat" type="number" v-model="editedPost.time_repeat" :min="this.user.time_repeat" :placeholder="this.user.time_repeat"> минут
                             </div>
                         </div>
                         <div :style="repeat ? '' : 'color:gray;'" class="selectDate_repeat_main">
