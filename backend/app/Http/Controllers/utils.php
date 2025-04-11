@@ -112,35 +112,31 @@ class utils
             ->setAppInfo((new AppInfo)->setApiId($user->api_id)->setApiHash($user->api_hash))
             ->setIpc((new Ipc()));
 
-        while (true) {
-            try {
-                $proxy = Proxy::inRandomOrder()->first();
-                if ($proxy)
-                    $settings->setConnection((new Connection)
-                        ->addProxy(self::proxyToString($proxy->ip, $proxy->port, $proxy->type, $proxy->username, $proxy->password)));
+        try {
+            $proxy = Proxy::inRandomOrder()->first();
+            if ($proxy)
+                $settings->setConnection((new Connection)
+                    ->addProxy(self::proxyToString($proxy->ip, $proxy->port, $proxy->type, $proxy->username, $proxy->password)));
 
-                $MadelineProto = new \danog\MadelineProto\API("public/sessions/session_" . $user->id .  '.session' , $settings);
+            $MadelineProto = new \danog\MadelineProto\API("public/sessions/session_" . $user->id .  '.session' , $settings);
 
-                if (!$MadelineProto->getSelf()) return "Не авторизован";
+            if (!$MadelineProto->getSelf()) return "Не авторизован";
 
-                if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text);
-                else $MadelineProto->messages->sendMessage(peer: -$group, message: $text);
+            if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text);
+            else $MadelineProto->messages->sendMessage(peer: -$group, message: $text);
 
-                Notification::create([
-                    "user_id" => $user->id,
-                    "status" => "success",
-                    "text" => "Бот успешно отправил сообщение в группу " . $group
-                ]);
-
-                break;
-            } catch (Exception $e) {
-                Log::critical($e->getMessage());
-                Notification::create([
-                    "user_id" => $user->id,
-                    "status" => "error",
-                    "text" => "Бот не смог получить доступ к группе с ID: $group"
-                ]);
-            }
+            Notification::create([
+                "user_id" => $user->id,
+                "status" => "success",
+                "text" => "Бот успешно отправил сообщение в группу " . $group
+            ]);
+        } catch (Exception $e) {
+            Log::critical($e->getMessage());
+            Notification::create([
+                "user_id" => $user->id,
+                "status" => "error",
+                "text" => "Бот не смог получить доступ к группе с ID: $group"
+            ]);
         }
 
         return 1;

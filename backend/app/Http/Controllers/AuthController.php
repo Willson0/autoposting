@@ -68,8 +68,11 @@ class AuthController extends Controller
         $user["posts"] = Post::where("user_id", $user->id)
             ->whereNotNull('date')
             ->where(function ($query) {
-                $query->whereNotNull('end_count')
-                    ->orWhereNotNull('end_date');
+                $query->where('date', '>', Carbon::now("Europe/Moscow"))
+                ->orWhere(function ($subQuery) {
+                    $subQuery->whereNotNull('end_count')
+                        ->orWhereNotNull('end_date');
+                });
             })
             ->where(function ($query) {
                 $query->whereNull("end_count")

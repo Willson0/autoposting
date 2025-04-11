@@ -130,7 +130,7 @@ export default {
             }).then((response) => {
                 this.showpopup("auth");
             }).catch((response) => {
-                notify(`Вы уже авторизованы!`, 1);
+                notify(`Неправильные данные API ID/HASH, либо Вы уже авторизованы!`, 1);
             });
         },
         onKeyDown(index, event) {
