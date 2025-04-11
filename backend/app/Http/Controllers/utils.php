@@ -121,6 +121,7 @@ class utils
                     ->addProxy(self::proxyToString($proxy->ip, $proxy->port, $proxy->type, $proxy->username, $proxy->password)));
 
             $MadelineProto = new \danog\MadelineProto\API("public/sessions/session_" . $user->id .  '.session' , $settings);
+            $dialogs = $MadelineProto->getFullDialogs();
 
             if (!$MadelineProto->getSelf()) return "Не авторизован";
 
