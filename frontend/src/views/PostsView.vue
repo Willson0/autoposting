@@ -113,7 +113,7 @@ export default {
             let original = this.user.posts.filter(el => el.id === this.editedPost.id)[0];
             if (!original) return this.notify("401. Ошибка авторизации", 1);
 
-            this.editedPost["text"] = this.newPostText.innerText;
+            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerText;
 
             let formdata = new FormData();
             for (let key in this.editedPost) {
@@ -227,8 +227,6 @@ export default {
             if (post.time_repeat) this.repeat = true;
             if (post.end_count) this.not_repeat = "count";
             else if (post.end_date) this.not_repeat = "date";
-
-            document.querySelector(".edit_post .newPost_text").innerText = this.editedPost.text;
         }
     },
     async mounted () {
@@ -340,7 +338,7 @@ export default {
                         </label>
                         <input ref="photoInput" @change="addimg" style="display:none" type="file" id="photo">
                     </div>
-                    <div class="newPost_text" contenteditable aria-placeholder="123"></div>
+                    <div class="newPost_text" v-html="editedPost.text?.replace(/\n/g, '<br>')" contenteditable aria-placeholder="123"></div>
                     <div class="newPost_statistics"><i class="fa-solid fa-eye"></i><div>100K</div><div>20:31</div></div>
                 </div>
                 <div class="selectDate">
