@@ -3619,3 +3619,14 @@ input[type="number"]::-webkit-inner-spin-button {
   background-color: #585881;
 }
 
+.telegram-container_wrapper {
+  height: 100vh;
+  display:flex;
+  width:100%;
+}
+
+.telegram-container {
+  margin:auto;
+  display:flex;
+}
+

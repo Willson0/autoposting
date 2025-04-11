@@ -3,6 +3,7 @@ import axios from "axios";
 export default {
     name: "LoginView.vue",
     async mounted() {
+        document.body.style.overflow = "hidden";
         axios.defaults.withCredentials = true;
 
         document.body.style.backgroundColor = "#F9F6F3";
@@ -18,7 +19,7 @@ export default {
             })
                 .then((response) => {
                     if (!response.ok) return alert ("Error");
-                    this.$router.push("/panel");
+                    location.href = "/panel";
                 })
         }
         const script = document.createElement('script');
@@ -31,9 +32,6 @@ export default {
         document.getElementById('telegram-container').appendChild(script);
     },
     methods: {
-        sendData () {
-            axios.post(this.backend + "auth/login/test");
-        }
     },
     computed: {
         backend () {
@@ -44,8 +42,9 @@ export default {
 </script>
 
 <template>
-    <div id="telegram-container"></div>
-    <button @click="sendData()">Get test data</button>
+    <div class="telegram-container_wrapper">
+        <div id="telegram-container"></div>
+    </div>
 </template>
 
 <style scoped>
