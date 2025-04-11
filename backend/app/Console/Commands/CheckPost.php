@@ -63,7 +63,7 @@ class CheckPost extends Command
 
             foreach ($bots as $key => &$bot) {
                 if (!isset($bot["last_send"])) $bot["last_send"] = Carbon::now()->subMinute(60);
-                if ($bot["last_send"] < Carbon::now()->subSecond(intval(utils::getSettings()["cooldown"]))) {
+                if ($bot["last_send"] < Carbon::now()->subSeconds(intval(utils::getSettings()["cooldown"]))) {
                     $firstPost = array_key_first($bot["groups"]);
                     if (!empty($bot["groups"][$firstPost]) && is_array($bot["groups"][$firstPost])) {
                         $group = array_shift($bot["groups"][$firstPost]);
