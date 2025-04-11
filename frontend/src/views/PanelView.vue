@@ -111,6 +111,20 @@ export default {
             })
         },
         async sendCode () {
+            document.querySelector("#apiID").style.border = "";
+            document.querySelector("#apiHash").style.border = "";
+
+            let error = 0;
+            if (!this.user.api_id) {
+                document.querySelector("#apiID").style.border = "1px solid #f44336";
+                error = 1;
+            }
+            if (!this.user.api_hash) {
+                document.querySelector("#apiHash").style.border = "1px solid #f44336";
+                error = 1;
+            }
+            if (error) return alert ("API ID и API HASH должны быть заполнены!", 1);
+
             await axios.post(this.backend + "auth/phone", {
                 "phone": this.user.phone
             }).then((response) => {
