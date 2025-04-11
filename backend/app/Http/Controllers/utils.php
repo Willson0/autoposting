@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\Proxy;
 use danog\MadelineProto\LocalFile;
+use danog\MadelineProto\ParseMode;
 use danog\MadelineProto\Settings\AppInfo;
 use danog\MadelineProto\Settings\Connection;
 use danog\MadelineProto\Settings\Ipc;
@@ -71,12 +72,13 @@ class utils
                         ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
                             'chat_id' => -$group,
                             'caption' => $text,
+                            "parse_mode" => "HTML"
                         ]);
 //                    $response = Http::withOptions($options)
 //                        ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto?chat_id=' . (-$group)
 //                            . '&caption=' . $text . "&photo=" . ("https://" . env("DOMAIN") . "/storage/" . $photo));
                 else $response = Http::withOptions($options)
-                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text);
+                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=HTML");
                 Log::critical($response->json());
 
                 if (!$response->ok()) Notification::create([
@@ -126,8 +128,8 @@ class utils
             if (!$MadelineProto->getSelf()) return "Не авторизован";
 
 
-            if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text);
-            else $MadelineProto->messages->sendMessage(peer: -$group, message: $text);
+            if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text, parseMode: ParseMode::HTML);
+            else $MadelineProto->messages->sendMessage(peer: -$group, message: $text, parse_mode: ParseMode::HTML);
 
             Notification::create([
                 "user_id" => $user->id,

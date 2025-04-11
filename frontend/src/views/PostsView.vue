@@ -68,7 +68,7 @@ export default {
             this.$refs.photoInput.value = "";
         },
         checkpost () {
-            let body = document.querySelector(".popup.post .newPost_text").textContent;
+            let body = document.querySelector(".popup.post .newPost_text").innerHTML;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1)
 
             this.notify ("Пост успешно сохранен! Выберите время публикации.")
@@ -80,7 +80,7 @@ export default {
             document.querySelector(".popup.edit_post .selectDate_repeat_main_title .dp__main input").style.border = "";
             document.querySelector(".popup.edit_post .selectDate_repeat_interval>input").style.border = "";
 
-            let body = document.querySelector(".popup.edit_post .newPost_text").textContent;
+            let body = document.querySelector(".popup.edit_post .newPost_text").innerHTML;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1);
 
             if (!this.date) {
@@ -113,7 +113,7 @@ export default {
             let original = this.user.posts.filter(el => el.id === this.editedPost.id)[0];
             if (!original) return this.notify("401. Ошибка авторизации", 1);
 
-            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerText;
+            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerHTML;
 
             let formdata = new FormData();
             for (let key in this.editedPost) {
@@ -145,7 +145,7 @@ export default {
         saveSchedule () {
             if (!this.user.subscription) {
                 let data = new FormData();
-                data.append("text", this.newPostText.innerText);
+                data.append("text", this.newPostText.innerHTML);
                 if (this.photo) data.append("attachment", this.photo);
 
                 axios.post(this.backend + "post", data).then((response) => {
@@ -194,7 +194,7 @@ export default {
             }
 
             let data = new FormData();
-            data.append("text", this.newPostText.innerText);
+            data.append("text", this.newPostText.innerHTML);
             if (this.photo) data.append("attachment", this.photo);
             if (this.date) data.append("date", datetime.toISOString());
             if (this.repeat) {
@@ -338,7 +338,7 @@ export default {
                         </label>
                         <input ref="photoInput" @change="addimg" style="display:none" type="file" id="photo">
                     </div>
-                    <div class="newPost_text" v-html="editedPost.text?.replace(/\n/g, '<br>')" contenteditable aria-placeholder="123"></div>
+                    <div class="newPost_text" v-html="editedPost.text?.replace(/\n/g, '<br>')" contenteditable></div>
                     <div class="newPost_statistics"><i class="fa-solid fa-eye"></i><div>100K</div><div>20:31</div></div>
                 </div>
                 <div class="selectDate">
