@@ -123,7 +123,7 @@ export default {
                 document.querySelector("#apiHash").style.border = "1px solid #f44336";
                 error = 1;
             }
-            if (error) return alert ("API ID и API HASH должны быть заполнены!", 1);
+            if (error) return notify ("API ID и API HASH должны быть заполнены!", 1);
 
             await axios.post(this.backend + "auth/phone", {
                 "phone": this.user.phone
