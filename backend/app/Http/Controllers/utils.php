@@ -11,6 +11,7 @@ use danog\MadelineProto\LocalFile;
 use danog\MadelineProto\Settings\AppInfo;
 use danog\MadelineProto\Settings\Connection;
 use danog\MadelineProto\Settings\Ipc;
+use danog\MadelineProto\Settings\Peer;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -110,7 +111,8 @@ class utils
 
         $settings = (new \danog\MadelineProto\Settings)
             ->setAppInfo((new AppInfo)->setApiId($user->api_id)->setApiHash($user->api_hash))
-            ->setIpc((new Ipc()));
+            ->setIpc((new Ipc()))
+            ->setPeer((new Peer())->setFullFetch(true));
 
         try {
             $proxy = Proxy::inRandomOrder()->first();
@@ -121,6 +123,7 @@ class utils
             $MadelineProto = new \danog\MadelineProto\API("public/sessions/session_" . $user->id .  '.session' , $settings);
 
             if (!$MadelineProto->getSelf()) return "Не авторизован";
+
 
             if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text);
             else $MadelineProto->messages->sendMessage(peer: -$group, message: $text);
