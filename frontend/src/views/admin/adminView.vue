@@ -464,11 +464,9 @@ export default {
                 </div>
                 <div class="admin_main_proxy">
                     <div @click="showpopup('proxy'); editProxy = {...el}" v-for="el in data.proxy">
-                        <div class="admin_main_tasks_el_text">
                             <div class="admin_main_proxy_el">
                                 <span>{{el.type}}  {{ el.ip }}:{{el.port}}</span>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>

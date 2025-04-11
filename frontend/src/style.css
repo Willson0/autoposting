@@ -3630,8 +3630,14 @@ input[type="number"]::-webkit-inner-spin-button {
   display:flex;
 }
 
+.admin_main_proxy {
+  width:100%;
+}
+
 .admin_main_proxy>div {
   cursor:pointer;
+  width:100%;
+
 }
 
 .admin_main_proxy_el {
