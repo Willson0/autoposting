@@ -112,7 +112,7 @@ class utils
         $settings = (new \danog\MadelineProto\Settings)
             ->setAppInfo((new AppInfo)->setApiId($user->api_id)->setApiHash($user->api_hash))
             ->setIpc((new Ipc()))
-            ->setPeer((new Peer())->setFullFetch(true));
+            ->setPeer((new Peer)->setFullFetch(true));
 
         try {
             $proxy = Proxy::inRandomOrder()->first();
