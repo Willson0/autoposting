@@ -6,8 +6,9 @@ export default {
         axios.defaults.withCredentials = true;
 
         document.body.style.backgroundColor = "#F9F6F3";
+        let backend = this.backend;
         window.onTelegramAuth = async function (user) {
-            await fetch (this.backend + "auth/login", {
+            await fetch (backend + "auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
