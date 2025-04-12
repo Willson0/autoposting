@@ -242,11 +242,33 @@ class utils
     }
 
     public static function cleanTelegramHtml($text) {
-        $text = preg_replace('/<\/div>|<\/p>|<\/h[1-6]>|<\/tr>|<\/li>/i', "\n", $text);
-        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+        // 1. Заменяем все возможные HTML-переносы на \n
+        $text = preg_replace([
+            '/<br\s*\/?>/i',          // <br>, <br/>, <br />
+            '/<\/div>/i',              // </div>
+            '/<\/p>/i',                // </p>
+            '/<\/h[1-6]>/i',           // </h1>-</h6>
+            '/<\/tr>/i',               // </tr>
+            '/<\/li>/i',               // </li>
+            '/<\/ul>/i',               // </ul>
+            '/<\/ol>/i',               // </ol>
+            '/<\/table>/i',            // </table>
+        ], "\n", $text);
 
-        // Затем удаляем все HTML-теги (но сохраняем уже замененные переносы)
-        $allowedTags = ['<b>', '</b>', '<br>', '</br>', '<strong>', '</strong>',
+        // 2. Удаляем открывающие теги структурных элементов
+        $text = preg_replace([
+            '/<div[^>]*>/i',
+            '/<p[^>]*>/i',
+            '/<h[1-6][^>]*>/i',
+            '/<tr[^>]*>/i',
+            '/<li[^>]*>/i',
+            '/<ul[^>]*>/i',
+            '/<ol[^>]*>/i',
+            '/<table[^>]*>/i',
+        ], '', $text);
+
+        // 3. Удаляем все HTML-теги, кроме разрешенных Telegram
+        $allowedTags = ['<b>', '</b>', '<strong>', '</strong>',
             '<i>', '</i>', '<em>', '</em>',
             '<u>', '</u>', '<ins>', '</ins>',
             '<s>', '</s>', '<strike>', '</strike>', '<del>', '</del>',
@@ -256,15 +278,17 @@ class utils
 
         $cleaned = strip_tags($text, implode('', $allowedTags));
 
-        // Упрощаем оставшиеся теги (удаляем атрибуты)
+        // 4. Упрощаем оставшиеся теги (удаляем атрибуты)
         $cleaned = preg_replace('/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i', '<$1$2>', $cleaned);
 
-        // Заменяем множественные переносы на один
-        $cleaned = preg_replace('/\n+/', "\n", $cleaned);
+        // 5. Обрабатываем переносы:
+        // - Заменяем 2+ переноса на два переноса (для абзацев)
+        // - Оставляем одиночные переносы
+        $cleaned = preg_replace('/\n{3,}/', "\n\n", $cleaned);
 
-        // Восстанавливаем <br> из одиночных переносов
-        $cleaned = str_replace("\n", "<br>", trim($cleaned));
+        // 6. Удаляем переносы в начале и конце
+        $cleaned = trim($cleaned, "\n");
 
         return $cleaned;
-}
+    }
 }
