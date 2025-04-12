@@ -178,7 +178,7 @@ export default {
                 "code": code
             }).then((response) => {
                 console.log(response);
-                if (response["next"] === "end") return notify("Аккаунт телеграмма успешно авторизован!");
+                if (response["data"]["next"] === "end") return notify("Аккаунт телеграмма успешно авторизован!");
                 else this.showpopup("password");
             }).catch((response) => {
                 this.notify(`Непредвиденная ошибка! ${response}`, 1);
