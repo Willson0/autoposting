@@ -242,16 +242,28 @@ class utils
     }
 
     public static function cleanTelegramHtml($text) {
+        $text = preg_replace('/<\/div>|<\/p>|<\/h[1-6]>|<\/tr>|<\/li>/i', "\n", $text);
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+
+        // Затем удаляем все HTML-теги (но сохраняем уже замененные переносы)
         $allowedTags = ['<b>', '</b>', '<br>', '</br>', '<strong>', '</strong>',
-                      '<i>', '</i>', '<em>', '</em>',
-                      '<u>', '</u>', '<ins>', '</ins>',
-                      '<s>', '</s>', '<strike>', '</strike>', '<del>', '</del>',
-                      '<a href=', '</a>',
-                      '<code>', '</code>',
-                      '<pre>', '</pre>'];
+            '<i>', '</i>', '<em>', '</em>',
+            '<u>', '</u>', '<ins>', '</ins>',
+            '<s>', '</s>', '<strike>', '</strike>', '<del>', '</del>',
+            '<a href=', '</a>',
+            '<code>', '</code>',
+            '<pre>', '</pre>'];
 
         $cleaned = strip_tags($text, implode('', $allowedTags));
+
+        // Упрощаем оставшиеся теги (удаляем атрибуты)
         $cleaned = preg_replace('/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i', '<$1$2>', $cleaned);
+
+        // Заменяем множественные переносы на один
+        $cleaned = preg_replace('/\n+/', "\n", $cleaned);
+
+        // Восстанавливаем <br> из одиночных переносов
+        $cleaned = str_replace("\n", "<br>", trim($cleaned));
 
         return $cleaned;
 }
