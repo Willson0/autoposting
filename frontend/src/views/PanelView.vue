@@ -172,7 +172,6 @@ export default {
             this.hidepopup();
 
             let code = parseInt(this.code.join(""), 10);
-            this.showpopup("password");
 
             await axios.post(this.backend + "auth/code", {
                 "code": code
