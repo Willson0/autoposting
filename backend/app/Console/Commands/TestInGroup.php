@@ -29,10 +29,6 @@ class TestInGroup extends Command
      */
     public function handle()
     {
-        $post = Post::find(5);
-        $user = User::find(2);
-        $group = Group::find(2)->group_id;
-        $this->info(utils::sendToGroupByAccount($user, $group, $post->text, $post->attachment));
-//        $this->info(utils::createPayment(10, User::find(2)));
+        $this->info(utils::sendToGroupByAccount(User::find(3), -1387210618, "привет, кстати, ты еще тот пидорас", null));
     }
 }
