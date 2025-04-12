@@ -130,7 +130,7 @@ class AuthController extends Controller
         $response = $MadelineProto->completePhoneLogin($request->code);
 
         Log::critical($response);
-        if ($response["setup_password_required"] === false) {
+        if ($response["_"] !== "account.password") {
             $self = $MadelineProto->getSelf();
             if (!$self) {
                 Log::error('Не удалось получить информацию о себе. Вероятно, сессия не авторизована.');
