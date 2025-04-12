@@ -62,16 +62,16 @@ class CheckPost extends Command
             }
 
             foreach ($bots as $key => &$bot) {
-                if (!isset($bot["last_send"])) $bot["last_send"] = Carbon::now()->subMinute(60);
+                if (!isset($bot["last_send"])) $bot["last_send"] = Carbon::now()->subMinutes(60);
                 if ($bot["last_send"] < Carbon::now()->subSeconds(intval(utils::getSettings()["cooldown"]))) {
                     $firstPost = array_key_first($bot["groups"]);
                     if (!empty($bot["groups"][$firstPost]) && is_array($bot["groups"][$firstPost])) {
                         $group = array_shift($bot["groups"][$firstPost]);
 
-                        if (empty($bot["groups"][$firstPost])) unset($bot["groups"][$firstPost]);
-
                         $post = Post::find($firstPost);
                         $user = User::find($key);
+
+                        Log::critical("SEND TO {$group} BY {$user->username} WITH TEXT {$post->text}");
 
                         try {
                             if ($user->bot_token) utils::sendToGroupByBot($user, $group, $post->text, $post->attachment);

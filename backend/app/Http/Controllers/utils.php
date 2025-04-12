@@ -145,7 +145,6 @@ class utils
 
             if (!$MadelineProto->getSelf()) return "Не авторизован";
 
-
             if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text, parseMode: ParseMode::HTML);
             else $MadelineProto->messages->sendMessage(peer: -$group, message: $text, parse_mode: ParseMode::HTML);
 
