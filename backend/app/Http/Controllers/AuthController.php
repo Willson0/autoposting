@@ -41,7 +41,7 @@ class AuthController extends Controller
         if (!$user) {
             $user = User::create([
                 "telegram_id" => $data["id"],
-                "username" => $data["username"],
+                "username" => $data["username"] ?? $data["first_name"],
             ]);
         }
 
