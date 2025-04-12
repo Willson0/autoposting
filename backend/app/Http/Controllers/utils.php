@@ -242,7 +242,7 @@ class utils
     }
 
     public static function cleanTelegramHtml($text) {
-        $allowedTags = ['<b>', '</b>', '<strong>', '</strong>',
+        $allowedTags = ['<b>', '</b>', '<br>', '</br>', '<strong>', '</strong>',
                       '<i>', '</i>', '<em>', '</em>',
                       '<u>', '</u>', '<ins>', '</ins>',
                       '<s>', '</s>', '<strike>', '</strike>', '<del>', '</del>',
