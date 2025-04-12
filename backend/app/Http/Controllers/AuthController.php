@@ -36,9 +36,9 @@ class AuthController extends Controller
         if (!hash_equals($calcHash, $hash))
             return response()->json(["message" => "Недействительные данные"], 403);
 
+        Log::critical($data);
         $user = User::where("telegram_id", $data["id"])->first();
         if (!$user) {
-            if (!isset($data["last_name"])) $data["last_name"] = "";
             $user = User::create([
                 "telegram_id" => $data["id"],
                 "username" => $data["username"],
