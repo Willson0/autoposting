@@ -39,6 +39,7 @@ class PostController extends Controller
             $data["attachment"] = "posts/post_" . $time . ".$ext";
         }
 
+        $data["text"] = utils::cleanTelegramHtml($data["text"]);
         if (!$user->subscription) {
             $post = Post::create([
                 "user_id" => $user["id"],
@@ -46,7 +47,6 @@ class PostController extends Controller
                 "attachment" => isset($data["attachment"]) ? $data["attachment"] : null,
                 "date" => Carbon::now("Europe/Moscow"),
             ]);
-
             Schedule::create([
                 "post_id" => $post["id"],
                 "next" => $post["date"],
@@ -57,7 +57,6 @@ class PostController extends Controller
         }
 
         $post = Post::create($data);
-
         Schedule::create([
             "post_id" => $post["id"],
             "next" => $post["date"],
@@ -92,6 +91,7 @@ class PostController extends Controller
             abort (409, "Время повторного поста не может быть меньше заданного.");
         if (isset($data["end_date"]) AND isset($data["end_count"]) )
             abort (409, "Не может быть указано два окончания повтора");
+        if (isset($data["text"])) $data["text"] = utils::cleanTelegramHtml($data["text"]);
 
         if (isset($data["end_date"])) $data["end_count"] = null;
         else if (isset($data["end_count"])) $data["end_date"] = null;

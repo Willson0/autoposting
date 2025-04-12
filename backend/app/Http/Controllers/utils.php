@@ -240,4 +240,19 @@ class utils
         Log::critical($response);
         return 1;
     }
+
+    public static function cleanTelegramHtml($text) {
+        $allowedTags = ['<b>', '</b>', '<strong>', '</strong>',
+                      '<i>', '</i>', '<em>', '</em>',
+                      '<u>', '</u>', '<ins>', '</ins>',
+                      '<s>', '</s>', '<strike>', '</strike>', '<del>', '</del>',
+                      '<a href=', '</a>',
+                      '<code>', '</code>',
+                      '<pre>', '</pre>'];
+
+        $cleaned = strip_tags($text, implode('', $allowedTags));
+        $cleaned = preg_replace('/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i', '<$1$2>', $cleaned);
+
+        return $cleaned;
+}
 }
