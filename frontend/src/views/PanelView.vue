@@ -169,17 +169,17 @@ export default {
         },
         async checkCode () {
             if (this.code.join("").length < 5) return notify("Введите полностью код!", 1);
-            this.hidepopup();
 
             let code = parseInt(this.code.join(""), 10);
 
             await axios.post(this.backend + "auth/code", {
                 "code": code
             }).then((response) => {
-                console.log(response);
+                this.hidepopup();
                 if (response["data"]["next"] === "end") return notify("Аккаунт телеграмма успешно авторизован!");
                 else this.showpopup("password");
             }).catch((response) => {
+                this.hidepopup();
                 this.notify(`Непредвиденная ошибка! ${response}`, 1);
             })
         },
