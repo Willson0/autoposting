@@ -177,7 +177,7 @@ export default {
             await axios.post(this.backend + "auth/code", {
                 "code": code
             }).then((response) => {
-                if (response.next === "end") return notify("Аккаунт телеграмма успешно авторизован!");
+                if (response["next"] === "end") return notify("Аккаунт телеграмма успешно авторизован!");
                 else this.showpopup("password");
             }).catch((response) => {
                 this.notify(`Непредвиденная ошибка! ${response}`, 1);
