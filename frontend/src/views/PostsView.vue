@@ -68,7 +68,8 @@ export default {
             this.$refs.photoInput.value = "";
         },
         checkpost () {
-            let body = document.querySelector(".popup.post .newPost_text").innerHTML;
+            // let body = document.querySelector(".popup.post .newPost_text").innerHTML;
+            let body = document.querySelector(".popup.post .newPost_text").innerText;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1)
 
             this.notify ("Пост успешно сохранен! Выберите время публикации.")
@@ -80,7 +81,8 @@ export default {
             document.querySelector(".popup.edit_post .selectDate_repeat_main_title .dp__main input").style.border = "";
             document.querySelector(".popup.edit_post .selectDate_repeat_interval>input").style.border = "";
 
-            let body = document.querySelector(".popup.edit_post .newPost_text").innerHTML;
+            // let body = document.querySelector(".popup.edit_post .newPost_text").innerHTML;
+            let body = document.querySelector(".popup.edit_post .newPost_text").innerText;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1);
 
             if (!this.date) {
@@ -113,7 +115,8 @@ export default {
             let original = this.user.posts.filter(el => el.id === this.editedPost.id)[0];
             if (!original) return this.notify("401. Ошибка авторизации", 1);
 
-            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerHTML;
+            // this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerHTML;
+            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerText;
 
             let formdata = new FormData();
             for (let key in this.editedPost) {
@@ -145,7 +148,8 @@ export default {
         saveSchedule () {
             if (!this.user.subscription) {
                 let data = new FormData();
-                data.append("text", this.newPostText.innerHTML);
+                // data.append("text", this.newPostText.innerHTML);
+                data.append("text", this.newPostText.innerText);
                 if (this.photo) data.append("attachment", this.photo);
 
                 axios.post(this.backend + "post", data).then((response) => {
@@ -194,7 +198,8 @@ export default {
             }
 
             let data = new FormData();
-            data.append("text", this.newPostText.innerHTML);
+            // data.append("text", this.newPostText.innerHTML);
+            data.append("text", this.newPostText.innerText);
             if (this.photo) data.append("attachment", this.photo);
             if (this.date) data.append("date", datetime.toISOString());
             if (this.repeat) {

@@ -29,7 +29,7 @@ class PostController extends Controller
             abort (409, "Укажите окончание повтора: определенную дату или кол-во раз");
         if (!isset($data["time_repeat"]) AND (isset($data["end_date"]) OR isset($data["end_count"])))
             abort (409, "Укажите кол-во повторов");
-        if (isset($data["end_date"]) AND isset($data["end_count"]) )
+        if (isset($data["end_date"]) AND isset($data["end_count"]))
             abort (409, "Не может быть указано два окончания повтора");
 
         if (isset($data["attachment"])) {
@@ -39,7 +39,7 @@ class PostController extends Controller
             $data["attachment"] = "posts/post_" . $time . ".$ext";
         }
 
-        $data["text"] = utils::cleanTelegramHtml($data["text"]);
+//        $data["text"] = utils::cleanTelegramHtml($data["text"]);
         if (!$user->subscription) {
             $post = Post::create([
                 "user_id" => $user["id"],
@@ -91,7 +91,7 @@ class PostController extends Controller
             abort (409, "Время повторного поста не может быть меньше заданного.");
         if (isset($data["end_date"]) AND isset($data["end_count"]) )
             abort (409, "Не может быть указано два окончания повтора");
-        if (isset($data["text"])) $data["text"] = utils::cleanTelegramHtml($data["text"]);
+//        if (isset($data["text"])) $data["text"] = utils::cleanTelegramHtml($data["text"]);
 
         if (isset($data["end_date"])) $data["end_count"] = null;
         else if (isset($data["end_count"])) $data["end_date"] = null;

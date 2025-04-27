@@ -75,13 +75,14 @@ class utils
                         ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
                             'chat_id' => -$group,
                             'caption' => $text,
-                            "parse_mode" => "HTML"
+//                            "parse_mode" => "HTML"
+                            "parse_mode" => "MarkdownV2"
                         ]);
 //                    $response = Http::withOptions($options)
 //                        ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto?chat_id=' . (-$group)
 //                            . '&caption=' . $text . "&photo=" . ("https://" . env("DOMAIN") . "/storage/" . $photo));
                 else $response = Http::withOptions($options)
-                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=HTML");
+                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=MarkdownV2");
                 Log::critical($response->json());
 
                 if (!$response->ok()) Notification::create([
@@ -145,8 +146,8 @@ class utils
 
             if (!$MadelineProto->getSelf()) return "Не авторизован";
 
-            if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text, parseMode: ParseMode::HTML);
-            else $MadelineProto->messages->sendMessage(peer: -$group, message: $text, parse_mode: ParseMode::HTML);
+            if ($photo) $MadelineProto->sendPhoto(peer: -$group, file: new LocalFile(storage_path("app/public/" . $photo)), caption: $text, parseMode: ParseMode::MARKDOWN);
+            else $MadelineProto->messages->sendMessage(peer: -$group, message: $text, parse_mode: ParseMode::MARKDOWN);
 
             Notification::create([
                 "user_id" => $user->id,
@@ -264,7 +265,7 @@ class utils
             $cleaned = preg_replace('/<div[^>]*>/i', '', $cleaned);
 
             // 5. Упрощаем оставшиеся теги
-            $cleaned = preg_replace('/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i', '<$1$2>', $cleaned);
+            // $cleaned = preg_replace('/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i', '<$1$2>', $cleaned);
 
             // 6. Обрабатываем множественные переносы
             $cleaned = preg_replace('/\n+/', "\n", $cleaned);
