@@ -76,13 +76,13 @@ class utils
                             'chat_id' => -$group,
                             'caption' => $text,
 //                            "parse_mode" => "HTML"
-                            "parse_mode" => "MarkdownV2"
+                            "parse_mode" => "Markdown"
                         ]);
 //                    $response = Http::withOptions($options)
 //                        ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto?chat_id=' . (-$group)
 //                            . '&caption=' . $text . "&photo=" . ("https://" . env("DOMAIN") . "/storage/" . $photo));
                 else $response = Http::withOptions($options)
-                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=MarkdownV2");
+                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=Markdown");
                 Log::critical($response->json());
 
                 if (!$response->ok()) Notification::create([
@@ -103,7 +103,7 @@ class utils
         return 1;
     }
 
-    public static function escapeMarkdownV2($text) {
+    public static function escapeMarkdown($text) {
         $escape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!', '\\'];
         foreach ($escape as $char) {
             $text = str_replace($char, '\\' . $char, $text);
