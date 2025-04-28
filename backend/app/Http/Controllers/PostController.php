@@ -19,10 +19,10 @@ class PostController extends Controller
         $data = $request->validated();
         $data["user_id"] = $user["id"];
 
-        if (isset($data["date"])) {
-            $data["date"] = Carbon::parse($data["date"]);
-            if ($data["date"] < Carbon::now("Europe/Moscow")) abort (409, "Дата публикации не может быть раньше сегодняшней");
-        }
+//        if (isset($data["date"])) {
+//            $data["date"] = Carbon::parse($data["date"]);
+//            if ($data["date"] < Carbon::now("Europe/Moscow")) abort (409, "Дата публикации не может быть раньше сегодняшней");
+//        }
         if (isset($data["time_repeat"])) if ($data["time_repeat"] < utils::getSettings()["time_repeat"])
             abort (409, "Время повторного поста не может быть меньше заданного.");
         if (isset($data["time_repeat"]) AND !(isset($data["end_date"]) OR isset($data["end_count"])))
@@ -79,10 +79,10 @@ class PostController extends Controller
     public function update (Post $post, PostUpdateRequest $request) {
         $data = $request->validated();
 
-        if (isset($data["date"])) {
-            $data["date"] = Carbon::parse($data["date"]);
-            if ($data["date"] < Carbon::now("Europe/Moscow")) abort (409, "Дата публикации не может быть раньше сегодняшней");
-        }
+//        if (isset($data["date"])) {
+//            $data["date"] = Carbon::parse($data["date"]);
+//            if ($data["date"] < Carbon::now("Europe/Moscow")) abort (409, "Дата публикации не может быть раньше сегодняшней");
+//        }
         if (isset($data["end_date"])) {
             $data["end_date"] = Carbon::parse($data["end_date"]);
             if ($data["end_date"] < Carbon::now("Europe/Moscow")) abort (409, "Дата окончания не может быть раньше сегодняшней");
