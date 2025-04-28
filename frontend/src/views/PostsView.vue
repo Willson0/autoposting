@@ -149,7 +149,9 @@ export default {
             if (!this.user.subscription) {
                 let data = new FormData();
                 // data.append("text", this.newPostText.innerHTML);
-                data.append("text", this.newPostText.innerText);
+                data.append("text", this.newPostText.innerText.replace(/<br\s*\/?>/gi, '\n')
+                    .replace(/<\/div>/gi, '\n')
+                    .replace(/<div.*?>/gi, ''));
                 if (this.photo) data.append("attachment", this.photo);
 
                 axios.post(this.backend + "post", data).then((response) => {
@@ -199,7 +201,9 @@ export default {
 
             let data = new FormData();
             // data.append("text", this.newPostText.innerHTML);
-            data.append("text", this.newPostText.innerText);
+            data.append("text", this.newPostText.innerText.replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/div>/gi, '\n')
+                .replace(/<div.*?>/gi, ''));
             if (this.photo) data.append("attachment", this.photo);
             if (this.date) data.append("date", datetime.toISOString());
             if (this.repeat) {
