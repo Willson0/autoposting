@@ -81,8 +81,18 @@ class utils
 //                    $response = Http::withOptions($options)
 //                        ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto?chat_id=' . (-$group)
 //                            . '&caption=' . $text . "&photo=" . ("https://" . env("DOMAIN") . "/storage/" . $photo));
-                else $response = Http::withOptions($options)
-                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=Markdown");
+//                else $response = Http::withOptions($options)
+//                    ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage?chat_id=' . (-$group) . '&text=' . $text . "&parse_mode=Markdown");
+                else {
+                    $data = [
+                        'chat_id' => -$group,
+                        'text' => $text,
+                        'parse_mode' => 'Markdown',
+                    ];
+
+                    $response = Http::withOptions($options)
+                        ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendMessage', $data);
+                }
                 Log::critical($response->json());
 
                 if (!$response->ok()) Notification::create([
@@ -271,5 +281,21 @@ class utils
             $cleaned = preg_replace('/\n+/', "\n", $cleaned);
 
             return trim($cleaned);
+    }
+
+    public static function deleteDirRecursive($dir)
+    {
+        $items = scandir($dir);
+
+        foreach ($items as $item) {
+            if ($item == '.' || $item == '..') continue;
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+
+            if (is_dir($path)) self::deleteDirRecursive($path);
+            else unlink($path);
+        }
+
+        rmdir($dir);
     }
 }

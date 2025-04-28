@@ -6,6 +6,11 @@
   border:0;
 }
 
+textarea {
+  resize: none;
+  background-color: transparent;
+}
+
 button {
   cursor:pointer;
 }
@@ -154,10 +159,33 @@ button {
   font-size:14px;
   transition:0.2s;
 }
+.nav_main_block button.inactive {
+  background-color: #818181 !important;
+  cursor: not-allowed;
+}
+
+.nav_main_block button img {
+  height:20px;
+}
 
 .nav_main_block button:hover {
   background-color: #114bbf;
 
+}
+
+.nav_main_block_buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap:10px;
+  row-gap:10px;
+  flex-wrap: wrap;
+}
+
+.nav_main_block_buttons>.delete_button {
+  background-color: #f44336;
+}
+.nav_main_block_buttons>.delete_button:hover {
+  background-color: #c13429;
 }
 
 .nav_main_buttons {
@@ -296,6 +324,8 @@ button {
 .newPost_text {
   margin: 0 14px;
   margin-top:10px;
+  color:white;
+  font-size: 16px;
 }
 
 .popup_buttons {
@@ -3511,6 +3541,11 @@ input[type="number"]::-webkit-inner-spin-button {
   color:white;
 }
 
+.popup_auth_buttons_send.inactive {
+  background-color: #545455 !important;
+  cursor: not-allowed;
+}
+
 .popup_auth_buttons_send:hover {
   background-color: rgba(44, 49, 55, 0.84);
 }
@@ -3637,7 +3672,6 @@ input[type="number"]::-webkit-inner-spin-button {
 .admin_main_proxy>div {
   cursor:pointer;
   width:100%;
-
 }
 
 .admin_main_proxy_el {

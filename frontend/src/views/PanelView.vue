@@ -11,6 +11,8 @@ export default {
             newGroupID: "",
             code: ["", "", "", "", ""],
             password: "",
+            isLoading: false,
+            _dotsInterval: null,
         }
     },
     methods: {
@@ -31,6 +33,23 @@ export default {
                         this.notify("Группа успешно удалена!");
                     }
                 });
+        },
+        async startDots (el, text) {
+            let oldText = el.innerHTML;
+            let _dotsCount = 0;
+            el.style.width = (el.clientWidth+1) + "px";
+
+            this._dotsInterval = setInterval(() => {
+                _dotsCount = _dotsCount % 4 + 1;
+                el.innerHTML = text + '.'.repeat(_dotsCount-1);
+
+                if (this.isLoading === false) this.stopDots(el, oldText);
+            }, 200);
+        },
+        stopDots(el, oldText) {
+            clearInterval(this._dotsInterval);
+            el.innerHTML = oldText;
+            el.style.width = "";
         },
         async addGroup () {
             document.querySelector("#newGroup").style.border = "";
@@ -111,8 +130,11 @@ export default {
             })
         },
         async sendCode () {
+            if (this.isLoading) return;
             document.querySelector("#apiID").style.border = "";
             document.querySelector("#apiHash").style.border = "";
+            this.$refs["sendCodeRef"].classList.add("inactive");
+            await this.startDots(this.$refs["sendCodeRef"], "Обработка");
 
             let error = 0;
             if (!this.user.api_id) {
@@ -125,23 +147,24 @@ export default {
             }
             if (error) return notify ("API ID и API HASH должны быть заполнены!", 1);
 
+            this.isLoading = true;
             await axios.post(this.backend + "auth/phone", {
                 "phone": this.user.phone
             }).then((response) => {
                 this.showpopup("auth");
             }).catch((response) => {
                 notify(`Неправильные данные API ID/HASH, либо Вы уже авторизованы!`, 1);
+            }).finally(() => {
+                this.isLoading = false;
+                this.$refs["sendCodeRef"].classList.remove("inactive");
             });
         },
         onKeyDown(index, event) {
             const key = event.key;
 
-            // Разрешаем только цифры
             if (/^\d$/.test(key)) {
-                // Записываем цифру
                 this.code[index] = key;
 
-                // Переход к следующему input
                 this.$nextTick(() => {
                     if (index < this.code.length - 1) {
                         this.$refs.otpRefs[index + 1].focus();
@@ -149,51 +172,86 @@ export default {
                         event.target.blur();
                     }
                 });
-
-                // Отменяем дефолтный ввод (чтобы не дублировалась цифра)
                 event.preventDefault();
             }
 
-            // Обработка Backspace
             if (key === "Backspace") {
                 if (this.code[index] === "") {
-                    if (index > 0) {
-                        this.$refs.otpRefs[index - 1].focus();
-                    }
-                } else {
-                    this.code[index] = ""; // просто удаляем текущую цифру
-                }
-
+                    if (index > 0) this.$refs.otpRefs[index - 1].focus();
+                } else this.code[index] = "";
                 event.preventDefault();
             }
         },
         async checkCode () {
-            if (this.code.join("").length < 5) return notify("Введите полностью код!", 1);
+            if (this.isLoading) return;
 
+            if (this.code.join("").length < 5) return notify("Введите полностью код!", 1);
             let code = parseInt(this.code.join(""), 10);
 
+            this.$refs["checkCodeRef"].classList.add("inactive");
+            await this.startDots(this.$refs["checkCodeRef"], "Проверка");
+
+            this.isLoading = true;
             await axios.post(this.backend + "auth/code", {
                 "code": code
             }).then((response) => {
                 this.hidepopup();
-                if (response["data"]["next"] === "end") return notify("Аккаунт телеграмма успешно авторизован!");
+                if (response["data"]["next"] === "end") {
+                    this.user.session = true;
+                    this.$store.dispatch("updateUser", this.user);
+
+                    return notify("Аккаунт телеграмма успешно авторизован!");
+                }
                 else this.showpopup("password");
             }).catch((response) => {
                 this.hidepopup();
-                this.notify(`Непредвиденная ошибка! ${response}`, 1);
+                this.notify(`Неправильный код!`, 1);
+            }).finally(() => {
+                this.isLoading = false;
             })
         },
         async checkPassword () {
+            if (this.isLoading) return;
             if (!this.password) return notify("Пароль не может быть пустым", 1);
 
+            this.$refs["checkPasswordRef"].classList.add("inactive");
+            await this.startDots(this.$refs["checkPasswordRef"], "Проверка");
+
+            this.isLoading = true;
             await axios.post(this.backend + "auth/password", {
                 "password": this.password
             }).then((response) => {
                 this.hidepopup();
+
+                this.user.session = true;
+                this.$store.dispatch("updateUser", this.user);
+
                 return notify("Аккаунт телеграмма успешно авторизован!");
             }).catch((response) => {
-                this.notify(`Непредвиденная ошибка! ${response}`, 1);
+                this.notify(`Неправильный пароль!`, 1);
+            }).finally(() => {
+                this.isLoading = false;
+                this.$refs["checkPasswordRef"].classList.remove("inactive");
             })
+        },
+        async deleteSession () {
+            if (this.isLoading) return;
+
+            this.$refs["sendCodeDelete"].classList.add("inactive");
+            await this.startDots(this.$refs["sendCodeDelete"], "Удаление");
+
+            this.isLoading = true;
+            await axios.post(this.backend + "auth/delete").then((response) => {
+                notify(`Сессия успешно удалена!`);
+
+                this.user.session = false;
+                this.$store.dispatch("updateUser", this.user);
+            }).catch((response) => {
+                notify(`Активная сессия не найдена!`, 1);
+            }).finally(() => {
+                this.isLoading = false;
+                this.$refs["sendCodeDelete"].classList.remove("inactive");
+            });
         }
     },
     computed: {
@@ -218,7 +276,7 @@ export default {
             <hr>
             <div class="popup_auth_buttons">
                 <button @click="hidepopup" class="popup_auth_buttons_cancel">Назад</button>
-                <button class="popup_auth_buttons_send" @click="checkPassword">Отправить</button>
+                <button ref="checkPasswordRef" class="popup_auth_buttons_send" @click="checkPassword">Отправить</button>
             </div>
         </div>
     </div>
@@ -242,7 +300,7 @@ export default {
             <hr>
             <div class="popup_auth_buttons">
                 <button @click="hidepopup" class="popup_auth_buttons_cancel">Назад</button>
-                <button class="popup_auth_buttons_send" @click="checkCode">Отправить</button>
+                <button ref="checkCodeRef" class="popup_auth_buttons_send" @click="checkCode">Отправить</button>
             </div>
         </div>
     </div>
@@ -275,7 +333,10 @@ export default {
                     <input v-model="user.phone" type="text" placeholder="+7XXXXXXXXXX">
                 </div>
             </div>
-            <button @click="sendCode">Отправить код подтверждения</button>
+            <div class="nav_main_block_buttons">
+                <button ref="sendCodeRef" @click="sendCode">Отправить код подтверждения</button>
+                <button ref="sendCodeDelete" v-if="user.session" class="delete_button" @click="deleteSession">Удалить активную сессию</button>
+            </div>
         </div>
         <div class="nav_main_block">
             <div class="nav_main_block_title">Управление группами</div>

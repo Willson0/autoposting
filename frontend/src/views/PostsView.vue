@@ -22,12 +22,13 @@ export default {
             count: "",
             editedPost: {},
             timeKey: 0,
+            newPostText: "",
         }
     },
     computed: {
-        newPostText () {
-            return document.querySelector('.post .newPost_text');
-        },
+        // newPostText () {
+        //     return document.querySelector('.post .newPost_text');
+        // },
         user () {
             return this.$store.state.user;
         },
@@ -69,7 +70,8 @@ export default {
         },
         checkpost () {
             // let body = document.querySelector(".popup.post .newPost_text").innerHTML;
-            let body = document.querySelector(".popup.post .newPost_text").innerText;
+            // let body = document.querySelector(".popup.post .newPost_text").innerText;
+            let body = this.newPostText;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1)
 
             this.notify ("Пост успешно сохранен! Выберите время публикации.")
@@ -82,7 +84,8 @@ export default {
             document.querySelector(".popup.edit_post .selectDate_repeat_interval>input").style.border = "";
 
             // let body = document.querySelector(".popup.edit_post .newPost_text").innerHTML;
-            let body = document.querySelector(".popup.edit_post .newPost_text").innerText;
+            // let body = document.querySelector(".popup.edit_post .newPost_text").innerText;
+            let body = this.newPostText;
             if (body.length < 10) return this.notify("Количество символов в теле поста должно быть больше 10!", 1);
 
             if (!this.date) {
@@ -116,7 +119,7 @@ export default {
             if (!original) return this.notify("401. Ошибка авторизации", 1);
 
             // this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerHTML;
-            this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerText;
+            // this.editedPost["text"] = document.querySelector(".edit_post .newPost_text").innerText;
 
             let formdata = new FormData();
             for (let key in this.editedPost) {
@@ -148,10 +151,10 @@ export default {
         saveSchedule () {
             if (!this.user.subscription) {
                 let data = new FormData();
-                // data.append("text", this.newPostText.innerHTML);
-                data.append("text", this.newPostText.innerText.replace(/<br\s*\/?>/gi, '\n')
-                    .replace(/<\/div>/gi, '\n')
-                    .replace(/<div.*?>/gi, ''));
+                data.append("text", this.newPostText);
+                // data.append("text", this.newPostText.innerHTML.replace(/<br\s*\/?>/gi, '\n')
+                //     .replace(/<\/div>/gi, '\n')
+                //     .replace(/<div.*?>/gi, ''));
                 if (this.photo) data.append("attachment", this.photo);
 
                 axios.post(this.backend + "post", data).then((response) => {
@@ -200,10 +203,10 @@ export default {
             }
 
             let data = new FormData();
-            // data.append("text", this.newPostText.innerHTML);
-            data.append("text", this.newPostText.innerText.replace(/<br\s*\/?>/gi, '\n')
-                .replace(/<\/div>/gi, '\n')
-                .replace(/<div.*?>/gi, ''));
+            data.append("text", this.newPostText);
+            // data.append("text", this.newPostText.innerHTML.replace(/<br\s*\/?>/gi, '\n')
+            //     .replace(/<\/div>/gi, '\n')
+            //     .replace(/<div.*?>/gi, ''));
             if (this.photo) data.append("attachment", this.photo);
             if (this.date) data.append("date", datetime.toISOString());
             if (this.repeat) {
@@ -245,6 +248,13 @@ export default {
         //         if (ev.srcElement === el) el.classList.remove("active");
         //     });
         // })
+
+        document.querySelectorAll('textarea').forEach(t => {
+            t.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
     }
 }
 </script>
@@ -347,7 +357,9 @@ export default {
                         </label>
                         <input ref="photoInput" @change="addimg" style="display:none" type="file" id="photo">
                     </div>
-                    <div class="newPost_text" v-html="editedPost.text?.replace(/\n/g, '<br>')" contenteditable></div>
+<!--                    <div class="newPost_text" v-html="editedPost.text?.replace(/\n/g, '<br>')" contenteditable></div>-->
+<!--                    <textarea name="" id="" cols="30" rows="10"></textarea>-->
+                    <textarea v-model="editedPost['text']" class="newPost_text" name="" id=""></textarea>
                     <div class="newPost_statistics"><i class="fa-solid fa-eye"></i><div>100K</div><div>20:31</div></div>
                 </div>
                 <div class="selectDate">
@@ -424,7 +436,8 @@ export default {
                     </label>
                     <input ref="photoInput" @change="addimg" style="display:none" type="file" id="photo">
                 </div>
-                <div class="newPost_text" contenteditable aria-placeholder="123"></div>
+<!--                <div class="newPost_text" contenteditable aria-placeholder="123"></div>-->
+                <textarea v-model="newPostText" class="newPost_text" name="" id=""></textarea>
                 <div class="newPost_statistics"><i class="fa-solid fa-eye"></i><div>100K</div><div>20:31</div></div>
             </div>
             <div class="popup_buttons">

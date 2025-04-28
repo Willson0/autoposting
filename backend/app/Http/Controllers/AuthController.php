@@ -65,6 +65,10 @@ class AuthController extends Controller
         $user->groups;
         $user->notifications;
 
+        $path = public_path("sessions/session_" . $user->id . '.session');
+        if (file_exists($path)) $user["session"] = true;
+        else $user["session"] = false;
+
         $user["posts"] = Post::where("user_id", $user->id)
             ->whereNotNull('date')
             ->where(function ($query) {
@@ -160,5 +164,31 @@ class AuthController extends Controller
         if ($response["_"] === "auth.authorization") return response()->json(["next" => "end"]);
 
         abort(400);
+    }
+
+    public function destroySession (Request $request) {
+        $user = $request->get("user");
+        $path = public_path("sessions/session_" . $user->id . '.session');
+
+        if (file_exists($path)) {
+            utils::deleteDirRecursive($path);
+        } else abort (404);
+
+//        $settings = (new \danog\MadelineProto\Settings)
+//            ->setAppInfo((new AppInfo)->setApiId($user->api_id)->setApiHash($user->api_hash))
+//            ->setIpc((new Settings\Ipc()));
+//
+//        $MadelineProto = new \danog\MadelineProto\API("sessions/session_" . $user->id . '.session', $settings);
+//
+//        try {
+//            $me = $MadelineProto->getSelf();
+//
+//            if ($me) utils::deleteDirRecursive("sessions/session_" . $user->id . '.session');
+//            else abort (404);
+//        } catch (\danog\MadelineProto\Exception $e) {
+//            abort (404);
+//        }
+
+        return response()->json(["status" => "ok"]);
     }
 }

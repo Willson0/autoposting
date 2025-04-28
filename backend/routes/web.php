@@ -23,6 +23,7 @@ Route::group(["prefix" => "api"], function () {
             Route::post("phone", [AuthController::class, "phone"]);
             Route::post("code", [AuthController::class, "checkCode"]);
             Route::post("password", [AuthController::class, "checkPassword"]);
+            Route::post("delete", [AuthController::class, "destroySession"]);
         });
     });
 
