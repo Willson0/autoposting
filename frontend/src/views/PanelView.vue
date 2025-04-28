@@ -207,6 +207,7 @@ export default {
                 this.notify(`Неправильный код!`, 1);
             }).finally(() => {
                 this.isLoading = false;
+                this.$refs["checkCodeRef"].classList.remove("inactive");
             })
         },
         async checkPassword () {
