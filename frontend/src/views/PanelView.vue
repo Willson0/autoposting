@@ -204,7 +204,6 @@ export default {
                 }
                 else this.showpopup("password");
             }).catch((response) => {
-                this.hidepopup();
                 this.notify(`Неправильный код!`, 1);
             }).finally(() => {
                 this.isLoading = false;
