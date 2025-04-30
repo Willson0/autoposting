@@ -139,6 +139,8 @@ export default {
             }
 
             await axios.post(this.backend + "post/" + this.editedPost.id, formdata).then((response) => {
+                if (response.data["error"]) return notify (response.data["error"], 1);
+
                 notify(`Пост №${this.editedPost.id} успешно обновлен!`);
                 axios.post(this.backend + "auth/profile").then((response) => {
                     this.$store.dispatch("updateUser", response.data);
@@ -216,6 +218,7 @@ export default {
             }
 
             axios.post(this.backend + "post", data).then((response) => {
+                if (response.data["error"]) return notify (response.data["error"], 1);
                 notify("Новый пост успешно добавлен!");
 
                 this.hidepopup();

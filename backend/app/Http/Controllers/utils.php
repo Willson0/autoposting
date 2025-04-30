@@ -298,4 +298,43 @@ class utils
 
         rmdir($dir);
     }
+
+    public static function compressImage($uploadFileArr, $filename = null) {
+        $maxSizeBytes = 10 * 1024 * 1024; // 10 МБ
+        $minQuality = 20; // Минимальное качество JPEG
+        $quality = 90;
+        $inputTmp = $uploadFileArr['tmp_name'];
+
+        $ext = $inputTmp->getClientOriginalExtension();
+        $time = time();
+        $filename = "post_" . $time . ".$ext";
+
+        $storagePath = storage_path('app/public/posts/' . $filename);
+
+        if (!file_exists(dirname($storagePath))) {
+            mkdir(dirname($storagePath), 0775, true);
+        }
+
+        $image = imagecreatefromjpeg($inputTmp);
+        if (!$image) {
+            return false;
+        }
+
+        // Сжимаем
+        do {
+            imagejpeg($image, $storagePath, $quality);
+            $fileSize = filesize($storagePath);
+
+            if ($fileSize <= $maxSizeBytes) {
+                imagedestroy($image);
+                // Возвращаем публичный путь (для asset())
+                return 'posts/' . $filename;
+            }
+            $quality -= 5;
+        } while ($quality >= $minQuality);
+
+        imagedestroy($image);
+        unlink($storagePath);
+        return false;
+    }
 }
