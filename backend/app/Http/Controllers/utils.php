@@ -303,7 +303,7 @@ class utils
         $maxSizeBytes = 10 * 1024 * 1024; // 10 МБ
         $minQuality = 20; // Минимальное качество JPEG
         $quality = 90;
-        $inputTmp = $uploadFileArr['tmp_name'];
+        $inputTmp = $uploadFileArr;
 
         $ext = $inputTmp->getClientOriginalExtension();
         $time = time();
