@@ -43,6 +43,8 @@ class PostController extends Controller
             $ext = $data["attachment"]->getClientOriginalExtension();
             $time = time();
             Storage::disk("public")->putFileAs("posts", $data["attachment"], "post_" . $time . ".$ext");
+
+            $data = "post_" . $time . ".$ext";
 //            $result = utils::compressImage($data["attachment"]);
 //            if (!$result) return response()->json(["error" => "Картинка весит слишком много (>10mb)"]);
 
