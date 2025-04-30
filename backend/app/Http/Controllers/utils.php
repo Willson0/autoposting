@@ -338,7 +338,7 @@ class utils
         return false;
     }
 
-    public static function validateTelegramAttachment($file, $maxSizeBytes = 10 * 1024 * 1024, $maxWidth = 1280, $maxHeight = 1280)
+    public static function validateTelegramAttachment($file, $maxSizeBytes = 10 * 1024 * 1024, $maxWidth = 10000, $maxHeight = 10000)
     {
         // Список разрешённых расширений и mime-типов
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'];
