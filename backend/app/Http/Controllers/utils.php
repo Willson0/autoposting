@@ -337,4 +337,50 @@ class utils
         unlink($storagePath);
         return false;
     }
+
+    public static function validateTelegramAttachment($file, $maxSizeBytes = 10 * 1024 * 1024, $maxWidth = 1280, $maxHeight = 1280)
+    {
+        // Список разрешённых расширений и mime-типов
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff'];
+        $allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'image/bmp',
+            'image/tiff',
+        ];
+
+        // Проверка на наличие файла
+        if (!$file || !$file->isValid()) {
+            throw new Exception('Не загружен файл.');
+        }
+
+        // Получаем расширение и mime-тип
+        $extension = strtolower($file->getClientOriginalExtension());
+        $mimeType = $file->getMimeType();
+
+        if (!in_array($extension, $allowedExtensions) || !in_array($mimeType, $allowedMimeTypes)) {
+            throw new Exception('Формат файла не поддерживается. Допустимы: jpeg, jpg, png, gif, webp, bmp, tiff.');
+        }
+
+        // Проверка размера файла (в байтах)
+        if ($file->getSize() > $maxSizeBytes) {
+            throw new Exception('Файл слишком большой. Максимальный размер: ' . number_format($maxSizeBytes / 1024 / 1024, 2) . ' МБ');
+        }
+
+        // Проверяем размеры изображения
+        $imageSize = getimagesize($file->getPathname());
+        if (!$imageSize) {
+            throw new Exception('Не удалось получить размеры изображения.');
+        }
+
+        [$width, $height] = $imageSize;
+        if ($width > $maxWidth || $height > $maxHeight) {
+            throw new Exception("Изображение слишком большое по габаритам. Допустимые: {$maxWidth}x{$maxHeight} пикселей");
+        }
+
+        return true;
+    }
+
 }

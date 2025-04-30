@@ -7,6 +7,7 @@ use App\Http\Requests\PostUpdateRequest;
 use App\Models\Post;
 use App\Models\Schedule;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -33,13 +34,19 @@ class PostController extends Controller
             abort (409, "Не может быть указано два окончания повтора");
 
         if (isset($data["attachment"])) {
-//            $ext = $data["attachment"]->getClientOriginalExtension();
-//            $time = time();
-//            Storage::disk("public")->putFileAs("posts", $data["attachment"], "post_" . $time . ".$ext");
-            $result = utils::compressImage($data["attachment"]);
-            if (!$result) return response()->json(["error" => "Картинка весит слишком много (>10mb)"]);
+            try {
+                utils::validateTelegramAttachment($data["attachment"]);
+            } catch (Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
 
-            $data["attachment"] = $result;
+            $ext = $data["attachment"]->getClientOriginalExtension();
+            $time = time();
+            Storage::disk("public")->putFileAs("posts", $data["attachment"], "post_" . $time . ".$ext");
+//            $result = utils::compressImage($data["attachment"]);
+//            if (!$result) return response()->json(["error" => "Картинка весит слишком много (>10mb)"]);
+
+//            $data["attachment"] = $result;
         }
 
 //        $data["text"] = utils::cleanTelegramHtml($data["text"]);
@@ -101,15 +108,21 @@ class PostController extends Controller
 
         if ($request->hasAny("attachment")) {
             if ($request->hasFile('attachment')) {
+                try {
+                    utils::validateTelegramAttachment($data["attachment"]);
+                } catch (Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+
                 if ($post->attachment) Storage::disk("public")->delete($post["attachment"]);
-//                $ext = $request["attachment"]->getClientOriginalExtension(); $time = time();
-//                Storage::disk("public")->putFileAs("posts", $request["attachment"], "post_" . $time . ".$ext");
-//                $data["attachment"] = "posts/post_" . $time . ".$ext";
+                $ext = $request["attachment"]->getClientOriginalExtension(); $time = time();
+                Storage::disk("public")->putFileAs("posts", $request["attachment"], "post_" . $time . ".$ext");
+                $data["attachment"] = "posts/post_" . $time . ".$ext";
+//
+//                $result = utils::compressImage($data["attachment"]);
+//                if (!$result) return response()->json(["error" => "Картинка весит слишком много (>10mb)"]);
 
-                $result = utils::compressImage($data["attachment"]);
-                if (!$result) return response()->json(["error" => "Картинка весит слишком много (>10mb)"]);
-
-                $data["attachment"] = $result;
+//                $data["attachment"] = $result;
             }
             else if (!json_decode($request->attachment)) $data["attachment"] = null;
         }
