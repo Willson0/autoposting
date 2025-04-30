@@ -20,6 +20,7 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
 use Telegram\Bot\Api;
 
 class utils
@@ -69,15 +70,46 @@ class utils
                     'timeout' => 10,    // Тайм-аут
                 ]; else $options = [];
 
-                if ($photo)
+                if ($photo) {
+                    $img = Image::make(Storage::disk('public')->get($photo));
+
+                    $maxSum = 10000;
+                    $width = $img->width();
+                    $height = $img->height();
+                    $sum = $width + $height;
+
+                    if ($sum > $maxSum) {
+                        $coef = $maxSum / $sum;
+                        $newWidth = round($width * $coef);
+                        $newHeight = round($height * $coef);
+                        $img->resize($newWidth, $newHeight, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+                    }
+
+                    $tmpPath = storage_path('app/temp/' . time() . '.jpg');
+                    $img->save($tmpPath, 90, 'jpg');
+
                     $response = Http::withOptions($options)
-                        ->attach('photo', Storage::disk("public")->get($photo), 'photo.jpg') // передаем сам файл
+                        ->attach('photo', file_get_contents($tmpPath), 'photo.jpg')
                         ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
                             'chat_id' => -$group,
                             'caption' => $text,
-//                            "parse_mode" => "HTML"
-                            "parse_mode" => "Markdown"
+                            'parse_mode' => 'Markdown'
                         ]);
+
+                    @unlink($tmpPath);
+
+//                    $response = Http::withOptions($options)
+//                        ->attach('photo', Storage::disk("public")->get($photo), 'photo.jpg') // передаем сам файл
+//                        ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
+//                            'chat_id' => -$group,
+//                            'caption' => $text,
+////                            "parse_mode" => "HTML"
+//                            "parse_mode" => "Markdown"
+//                        ]);
+                }
 //                    $response = Http::withOptions($options)
 //                        ->get('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto?chat_id=' . (-$group)
 //                            . '&caption=' . $text . "&photo=" . ("https://" . env("DOMAIN") . "/storage/" . $photo));
