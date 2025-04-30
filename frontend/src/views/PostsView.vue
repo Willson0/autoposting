@@ -160,6 +160,8 @@ export default {
                 if (this.photo) data.append("attachment", this.photo);
 
                 axios.post(this.backend + "post", data).then((response) => {
+                    if (response.data["error"]) return notify (response.data["error"], 1);
+
                     notify("Новый пост успешно добавлен!");
                     this.hidepopup();
 
