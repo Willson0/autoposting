@@ -68,6 +68,9 @@ class PostController extends Controller
             return response()->json();
         }
 
+        $data["text"] = preg_replace('/\*\*(.+?)\*\*/s', '*$1*', $data["text"]);
+        $data["text"] = preg_replace('/__(.+?)__/s', '_$1_', $data["text"]);
+
         $post = Post::create($data);
         Schedule::create([
             "post_id" => $post["id"],

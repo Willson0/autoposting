@@ -12,7 +12,7 @@ export default {
         return {
             photo: "",
             confirming: false,
-            date: "",
+            date: new Date(),
             time: {hours:0, minutes:0, seconds:0},
             dateTime: "",
             repeat: 0,
@@ -462,6 +462,7 @@ export default {
         </div>
         <div class="nav_main_block" v-if="user.subscription">
             <div class="nav_main_block_title">Запланированные посты</div>
+            <div v-if="user?.posts?.length === 0">Ничего нет...</div>
             <div class="nav_main_list">
                 <div v-for="post in user?.posts" @click="updateEdit(post)">
                     <div class="nav_main_list_img">

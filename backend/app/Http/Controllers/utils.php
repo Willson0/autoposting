@@ -106,7 +106,7 @@ class utils
                         ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
                             'chat_id' => -$group,
                             'caption' => $text,
-                            "parse_mode" => "Markdown"
+                            "parse_mode" => "MarkdownV2"
                         ]);
                 }
 //                    $response = Http::withOptions($options)
@@ -118,7 +118,7 @@ class utils
                     $data = [
                         'chat_id' => -$group,
                         'text' => $text,
-                        'parse_mode' => 'Markdown',
+                        'parse_mode' => 'MarkdownV2',
                     ];
 
                     $response = Http::withOptions($options)

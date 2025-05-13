@@ -52,7 +52,7 @@ class AuthController extends Controller
     }
 
     public function test (Request $request) {
-        $user = User::find(2);
+        $user = User::find(1);
 
         $cookie = utils::gen_cookie($user);
         $respcookie = Cookie::forever("login", $cookie);
