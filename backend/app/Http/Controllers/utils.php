@@ -106,7 +106,6 @@ class utils
                         ->post('https://api.telegram.org/bot' . $user->bot_token . '/sendPhoto', [
                             'chat_id' => -$group,
                             'caption' => $text,
-//                            "parse_mode" => "HTML"
                             "parse_mode" => "Markdown"
                         ]);
                 }

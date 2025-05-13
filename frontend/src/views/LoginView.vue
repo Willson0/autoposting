@@ -9,17 +9,17 @@ export default {
         document.body.style.backgroundColor = "#F9F6F3";
         let backend = this.backend;
 
-        // await fetch (backend + "auth/login/test", {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     credentials: 'include'
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) return alert ("Error");
-        //         location.href = "/panel";
-        //     }) // TODO: ОБЯЗАТЕЛЬНО УПРАЗДНИТЬ
+        await fetch (backend + "auth/login/test", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: 'include'
+        })
+            .then((response) => {
+                if (!response.ok) return alert ("Error");
+                location.href = "/panel";
+            }) // TODO: ОБЯЗАТЕЛЬНО УПРАЗДНИТЬ
 
         window.onTelegramAuth = async function (user) {
             await fetch (backend + "auth/login", {
